@@ -12,9 +12,9 @@ from solver import solve_nonogram, print_grid
 
 SIZE = 20  # 支持 5, 10, 15, 20, 25
 RANDOM_WAIT = True
-LOGIN = True
-SLEEP_MIN = 0.1
-SLEEP_MAX = 0.15
+LOGIN = False
+SLEEP_MIN = 0.2
+SLEEP_MAX = 0.3
 
 ITERATE = 12
 
@@ -35,19 +35,6 @@ if LOGIN:
     driver.get(url)
 
 wait = WebDriverWait(driver, 10)
-
-# # 点击登录按钮
-# element_to_click = wait.until(
-#     EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div[2]/a[1]'))
-# )
-# element_to_click.click()
-
-# # 点击通过 google 登录
-# element_to_click = wait.until(
-#     EC.element_to_be_clickable((By.XPATH, '/html/body/div[4]/div/div/div[2]/div[2]/a[2]'))
-# )
-# element_to_click.click()
-
 
 # 点击 15*15 挑战
 print(f"点击 {SIZE}*{SIZE}")
@@ -143,5 +130,5 @@ for i in range(ITERATE):
                     time.sleep(random.uniform(SLEEP_MIN, SLEEP_MAX))
     print("填写完成")
     sleep(2)
-sleep(100)  # 等待几秒钟以便查看结果
+sleep(100)
 driver.quit()

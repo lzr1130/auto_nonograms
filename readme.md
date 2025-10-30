@@ -1,4 +1,4 @@
-# Auto Nonogram Solver
+# Auto Nonograms Solver
 
 This repository contains an automatic script for solving nonograms on [puzzle-nonograms.com](https://puzzle-nonograms.com). The script is implemented in `auto_nonogram.py`.
 

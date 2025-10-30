@@ -10,34 +10,34 @@ from time import sleep
 
 from solver import solve_nonogram, print_grid
 
-SIZE = 20  # 支持 5, 10, 15, 20, 25
-RANDOM_WAIT = True
-LOGIN = False
-SLEEP_MIN = 0.2
-SLEEP_MAX = 0.3
+# Set the size of the Nonogram and other parameters
+SIZE = 20  # Supported sizes: 5, 10, 15, 20, 25
+RANDOM_WAIT = True  # Whether to use random wait times to simulate human behavior
+LOGIN = False  # Whether login is required
+SLEEP_MIN = 0.2  # Minimum random wait time
+SLEEP_MAX = 0.3  # Maximum random wait time
+ITERATE = 12  # Number of puzzles to solve
 
-ITERATE = 12
-
-# 目标 URL
-url = "https://cn.puzzle-nonograms.com/"
+# Target URL
+url = "https://www.puzzle-nonograms.com/"
 driver = webdriver.Chrome()
-cookie_to_add = json.load(open('cookie.json', 'r'))
+cookie_to_add = json.load(open('cookie.json', 'r'))  # Load cookies from file
 
-print(f"打开网页: {url}")
-
+print(f"Opening webpage: {url}")
 driver.get(url)
 
 if LOGIN:
-    # 登录状态下打开网页
+    # If login is required, add cookies and refresh the page
     sleep(2)
-    print("添加 cookie 并刷新页面")
+    print("Adding cookies and refreshing the page")
     driver.add_cookie(cookie_to_add)
     driver.get(url)
 
+# Wait for the page to load
 wait = WebDriverWait(driver, 10)
 
-# 点击 15*15 挑战
-print(f"点击 {SIZE}*{SIZE}")
+# Click the challenge button corresponding to the selected SIZE
+print(f"Selecting {SIZE}*{SIZE}")
 if SIZE == 5:
     element_to_click = wait.until(
         EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div[1]/ul/li[1]/a'))
@@ -64,25 +64,25 @@ elif SIZE == 25:
     )
     element_to_click.click()
 else:
-    raise ValueError("只支持 5, 10, 15, 20, 25 大小的 Nonogram")
+    raise ValueError("Only Nonogram sizes 5, 10, 15, 20, 25 are supported")
 
-
+# Loop to solve puzzles
 for i in range(ITERATE):
 
-    # 点击新题目
-    print("点击新题目")
+    # Click the "New Puzzle" button
+    print("Clicking 'New Puzzle'")
     element_to_click = wait.until(
         EC.element_to_be_clickable((By.XPATH, '//*[@id="btnNew"]'))
     )
     element_to_click.click()
 
-    # 读取题目要求
-    print("读取题目要求")
+    # Read puzzle requirements
+    print("Reading puzzle requirements")
     start = time.time()
-    colomns = []
+    colomns = []  # Store column requirements
     for i in range(1, SIZE + 1):
         colomn = []
-        for j in range(1, 8):
+        for j in range(1, 8):  # Each column can have up to 7 numbers
             try:
                 element = driver.find_element(By.XPATH, f'/html/body/div[2]/div[3]/div[2]/form/div[3]/div[1]/div/table/tbody/tr/td/div/div/div[1]/div/div[1]/div[{i}]/div[{j}]')
                 if element.text != '':
@@ -90,10 +90,10 @@ for i in range(ITERATE):
             except:
                 break
         colomns.append(colomn)
-    rows = []
+    rows = []  # Store row requirements
     for i in range(1, SIZE + 1):
         row = []
-        for j in range(1, 8):
+        for j in range(1, 8):  # Each row can have up to 7 numbers
             try:
                 element = driver.find_element(By.XPATH, f'/html/body/div[2]/div[3]/div[2]/form/div[3]/div[1]/div/table/tbody/tr/td/div/div/div[1]/div/div[2]/div[{i}]/div[{j}]')
                 if element.text != '':
@@ -102,33 +102,35 @@ for i in range(ITERATE):
                 break
         rows.append(row)
     end = time.time()
-    print(f"读取完成，耗时 {end - start:.5f} 秒")
-    print("列要求:", colomns)
-    print("行要求:", rows)
+    print(f"Requirements read, time taken: {end - start:.5f} seconds")
+    print("Column requirements:", colomns)
+    print("Row requirements:", rows)
 
-    # 求解
-    print("开始求解")
+    # Solve the Nonogram
+    print("Solving the puzzle")
     start = time.time()
-    solution = solve_nonogram(rows, colomns)
+    solution = solve_nonogram(rows, colomns)  # Call the solver function
     end = time.time()
-    print(f"求解完成，耗时 {end - start:.5f} 秒")
+    print(f"Puzzle solved, time taken: {end - start:.5f} seconds")
     for row in solution:
         print(row)
     # print_grid(solution)
 
-    # 填写答案
+    # Fill in the solution
     if RANDOM_WAIT:
-        print(f"开始填写答案(随机等待{SLEEP_MIN}-{SLEEP_MAX}s防止操作过快)")
+        print(f"Filling in the solution (random wait {SLEEP_MIN}-{SLEEP_MAX}s to avoid fast operations)")
     else:
-        print(f"开始填写答案(极速冲刺)")
+        print(f"Filling in the solution (fast mode)")
     for r in range(SIZE):
         for c in range(SIZE):
-            if solution[r][c] == 1:
+            if solution[r][c] == 1:  # If the solution indicates a filled cell
                 element_to_click = driver.find_element(By.XPATH, f'/html/body/div[2]/div[3]/div[2]/form/div[3]/div[1]/div/table/tbody/tr/td/div/div/div[1]/div/div[3]/div[{r+1}]/div[{c+1}]')
                 element_to_click.click()
                 if RANDOM_WAIT:
-                    time.sleep(random.uniform(SLEEP_MIN, SLEEP_MAX))
-    print("填写完成")
+                    time.sleep(random.uniform(SLEEP_MIN, SLEEP_MAX))  # Random wait
+    print("Solution filled")
     sleep(2)
+
+# Wait for a while before closing the browser
 sleep(100)
 driver.quit()

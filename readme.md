@@ -27,4 +27,4 @@ Feel free to tweak these parameters in the script to suit your preferences.
 
 ## Disclaimer
 
-This script is for educational purposes only. Use it responsibly and ensure compliance with the terms of service of [puzzle-nonograms.com](https://puzzle-nonograms.com).  
+This script is for educational purposes only. Use it responsibly and ensure compliance with the terms of service of [www.puzzle-nonograms.com](https://www.puzzle-nonograms.com).  
